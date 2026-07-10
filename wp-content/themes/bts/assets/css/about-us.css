@@ -1,0 +1,36 @@
+/*About Us Style*/
+
+.about-banner {
+    padding: 40px 0 50px;
+}
+
+p.moved-note {
+    font-size: 115%;
+    color: #993300;
+    font-weight: bold;
+}
+
+.about-content h3 {
+    color: var(--primary-color);
+    font-weight: bold;
+    font-size: 1.688rem;
+    margin-bottom: 15px;
+}
+
+.about-content p {
+    font-style: italic;
+}
+
+.about-content {
+    padding-bottom: 60px;
+}
+
+.about-content .ast-builder-grid-row {
+    align-items: baseline;
+}
+
+@media (min-width: 1024px) {
+    p.moved-note {
+        width: 65%;
+    }
+}

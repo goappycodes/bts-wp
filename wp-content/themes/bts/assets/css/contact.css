@@ -1,0 +1,23 @@
+/* contact us style here */
+
+.contact-inline-input {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.contact-inline-input input {
+    width: 95%;
+    border: 1px solid #ccc;
+    background: #FFF;
+    padding: 8px 10px;
+    color: #000;
+}
+.contact-inline-input input::placeholder{
+    color: #ccc;
+}
+.contact-textarea-field textarea {
+    height: 130px;
+    width: 90%;
+}
+

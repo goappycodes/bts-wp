@@ -1,0 +1,72 @@
+.site-main .ast-row {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.site-main .ast-row .product {
+    width: 25%;
+    padding: 0 10px;
+}
+
+.site-main .ast-row .product .entry-title a {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #0a4a7c;
+    line-height: 1.4em !important;
+    display: inline-block;
+}
+
+.site-main .ast-row .product .entry-title {
+    line-height: 1;
+}
+
+.site-main .ast-row .product .post-thumb-img-content.post-thumb {
+    max-height: 182px;
+    overflow: hidden;
+}
+
+.site-main .ast-row .product .entry-content {
+    max-height: 100px;
+    overflow: auto;
+    padding-right: 5px;
+}
+
+/* width */
+.site-main .ast-row .product .entry-content::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+.site-main .ast-row .product .entry-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+ 
+/* Handle */
+.site-main .ast-row .product .entry-content::-webkit-scrollbar-thumb {
+  background: #efefef; 
+}
+
+/* Handle on hover */
+.site-main .ast-row .product .entry-content::-webkit-scrollbar-thumb:hover {
+  background: #efefef; 
+}
+
+@media (max-width: 767px) {
+    .site-main .ast-row .product {
+        width: 50%;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

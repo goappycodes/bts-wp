@@ -1,0 +1,58 @@
+/* My Account Style */
+
+body {
+    padding: 0 !important;
+    max-width: 100% !important;
+    margin-top: 0 !important;
+    border: 0 !important;
+}
+
+.ast-left-sidebar #secondary {
+    display: none;
+}
+
+#primary {
+    border: 0 !important;
+    width: 100%;
+    margin-top: 0;
+    padding-left: 0;
+}
+
+.woocommerce-MyAccount-navigation-link.is-active a {
+    border-right: 3px solid var(--primary-color);
+    background-color: transparent;
+}
+
+.woocommerce-MyAccount-navigation-link {
+    border: 0;
+    border-bottom: 1px solid rgba(0,0,0,.1);
+}
+
+.ast-single-post .entry-title {
+    padding: 30px 0;
+    margin: 0;
+}
+
+.woocommerce button.button {
+    padding: 15px 30px;
+    height: auto;
+    margin-right: 10px;
+}
+
+button.show-password-input {
+    position: relative;
+}
+
+button.show-password-input::before {
+    content: '';
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    background: url(/wp-content/uploads/2025/10/eye-icon.png) center/cover;
+    top: calc(50% - 11px);
+    left: calc(50% - 11px);
+}
+
+button.show-password-input.display-password::before {
+    background: url(/wp-content/uploads/2025/10/eye-icon-crossed.png) center/cover;
+}

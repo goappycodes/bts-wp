@@ -1,0 +1,224 @@
+/* Archive Product Style */
+
+.health-corner.menu-item > .menu-link::after {
+    content: '';
+    height: 3px;
+    background-color: var(--primary-color);
+    width: calc(100% - 20px);
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    transition: all .3s;
+}
+
+.ast-left-sidebar #secondary {
+    padding-right: 10px;
+}
+
+.ast-left-sidebar #secondary .wp-block-group {
+    padding: 0;
+}
+
+.woocommerce .woocommerce-breadcrumb, 
+.woocommerce-products-header .description-more {
+    display: none;
+}
+
+.woocommerce-products-header__title.page-title {
+    text-align: center;
+    color: var(--primary-color);
+    font-weight: bold;
+    font-size: 1.688rem;
+    margin-bottom: 30px;
+}
+
+.sidebar-main h2 {
+    text-transform: uppercase;
+    font-size: 1.125rem;
+    font-weight: bold;
+    position: relative;
+    margin-bottom: 35px;
+}
+
+.sidebar-main h2::after {
+    content: "";
+    height: 3px;
+    display: block;
+    background-color: rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 30px;
+    position: absolute;
+    bottom: -15px;
+}
+
+ul.wc-block-product-categories-list.wc-block-product-categories-list--depth-1 {
+    border-left: 1px solid #ddd;
+    margin: 0 0 10px 3px;
+    padding-left: 15px;
+    width: 100%;
+}
+
+ul.wc-block-product-categories-list.wc-block-product-categories-list--depth-1 li {
+    border-bottom: 0 !important;
+    padding: 0 !important;
+}
+
+ul.wc-block-product-categories-list li ul li a {
+    font-size: .9em;
+    padding: 3px 0;
+    display: inline-block;
+    font-weight: 400 !important;
+}
+
+.woocommerce ul.products li.product.product-category>a, 
+.ast-article-post {
+    box-shadow: 0 1px 3px -2px rgb(0 0 0 / 12%), 0 1px 2px rgb(0 0 0 / 24%);
+    transition: box-shadow 0.3s ease-in-out;
+}
+
+.ast-article-post {
+    min-height: 430px;
+}
+
+.woocommerce ul.products li.product.product-category>a:hover, 
+.ast-article-post:hover {
+    box-shadow: 0 10px 20px rgb(0 0 0 / 19%), 0 6px 6px rgb(0 0 0 / 22%);
+}
+
+.woocommerce ul.products li.product .onsale {
+    padding: 4px 10px;
+    left: 0;
+    right: auto;
+    top: 25px;
+    min-height: auto !important;
+    min-width: auto !important;
+    border-radius: 2px;
+    line-height: 1.4;
+}
+
+.delivery-time-info, .woocommerce-loop-product__title, 
+.ast-woo-product-category, .price {
+    text-align: center;
+}
+
+.woocommerce ul.products li.product .star-rating {
+    width: 100% !important;
+    margin-bottom: 10px;
+}
+
+.saved-sale {
+    margin: 6px 0 2px;
+    color: #008000;
+}
+
+.woocommerce .star-rating::before {
+    min-width: 70px;
+    left: calc(50% - 35px);
+}
+
+.woocommerce ul.products li.product span.blinking {
+    width: 100%;
+    display: inline-block;
+    text-align: center;
+    color: red;
+    font-weight: 700;
+    font-size: 0.957rem;
+    animation: blink-animation 0.8s steps(5, start) infinite !important;
+    -webkit-animation: blink-animation 0.8s steps(5, start) infinite !important;
+}
+
+@keyframes blink-animation{
+    0%{
+        color:red;
+    }
+    100%{
+        color:#000;
+    }
+}
+
+.astra-shop-summary-wrap .button {
+    width: calc(100% - 20px);
+    margin: 20px 10px 0 !important;
+    padding: 8px 4px !important;
+    font-size: 0.765rem !important;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.woocommerce ul.products li.product .button, .woocommerce-page ul.products li.product .button {
+    margin-bottom: 20px !important;
+}
+
+.woocommerce ul.products li.product, .woocommerce-page ul.products li.product {
+    margin-bottom: 20px;
+}
+
+body.post-type-archive .woocommerce-products-header__title.page-title, 
+.woocommerce-products-header .page-description, 
+.term-description {
+    display: none;
+}
+
+.sidebar-main .delivery-time-info, .sidebar-main .price {
+    text-align: left;
+}
+
+#secondary .sidebar-main li {
+    border-bottom: 1px solid #e7e7e7;
+    padding: 3px 0;
+}
+
+#secondary .sidebar-main li a {
+    display: block;
+    font-weight: bold;
+}
+
+#secondary .sidebar-main li a:hover {
+    color: #000;
+}
+
+.woocommerce ul.product_list_widget li {
+    padding-left: 4em !important;
+}
+
+.astra-shop-summary-wrap {
+    padding: 0 5px;
+}
+
+@media (min-width: 769px) {
+    .ast-left-sidebar #primary {
+        padding-left: 40px;
+    }
+}
+
+@media (max-width: 1023px) {
+    .woocommerce ul.product_list_widget li img {
+        width: 8em;
+    }
+    
+    .woocommerce ul.product_list_widget li {
+        padding-left: 10em !important;
+    }
+}
+
+@media (max-width: 767px) {
+    .ast-article-post {
+        min-height: 355px;
+    }
+    
+    .button.product_type_simple.add_to_cart_button.ajax_add_to_cart {
+        padding: 8px !important;
+        font-size: 0.65rem !important;
+    }
+    
+    .woocommerce .woocommerce-ordering select {
+        width: 100%;
+    }
+    
+    .woocommerce-result-count {
+        width: 100%;
+        text-align: center;
+    }
+}
+

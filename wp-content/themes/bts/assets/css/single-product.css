@@ -1,0 +1,107 @@
+/* Single Product Style */
+
+#content {
+    padding-top: 50px;
+}
+
+.woocommerce div.product div.images, 
+.woocommerce div.product div.summary {
+    margin-bottom: 4em;
+}
+
+.related.products .ast-article-single.product {
+    box-shadow: rgb(149 157 165 / 20%) 0px 8px 24px;
+    padding: 10px !important;
+    transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s, color 0.3s, opacity 0.3s, -webkit-transform 0.3s, -webkit-box-shadow 0.3s;
+}
+
+.related.products .ast-article-single.product:hover {
+    box-shadow: rgb(100 100 111 / 31%) 0px 7px 29px 0px;
+}
+
+.woocommerce ul.products li.product .button, .woocommerce-page ul.products li.product .button {
+    width: 100%;
+    text-align: center;
+    padding: 12px 0;
+    margin-top: 20px;
+}
+
+div#tab-description {
+	font-size: 110%;
+	color: #000;
+	line-height: 1.6;
+}
+
+div#tab-description p {
+	margin-bottom: 15px;
+}
+
+.woocommerce-product-details__short-description {
+	font-size: 110%;
+	color: #000;
+	line-height: 1.6;
+	margin: 20px 0;
+}
+
+.woocommerce div.product .woocommerce-tabs {
+    padding-top: 0;
+}
+
+.woocommerce div.product div.images {
+    margin-bottom: 20px;
+}
+
+.woocommerce-js div.product form.cart .button {
+    min-width: 100%;
+    font-size: 1.4rem;
+    text-transform: uppercase;
+    float: none;
+    margin-bottom: 0px;
+}
+
+form.cart .quantity input {
+    font-size: 1.4rem;
+}
+
+.woocommerce-js div.product form.cart {
+	margin-bottom: 10px;
+}
+
+/* bundle price */
+.bts-tier {
+    display: block;
+    border: 1px solid #ddd;
+    margin-bottom: 12px;
+    border-radius: 6px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.bts-tier input {
+    display: none;
+}
+
+.bts-tier-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 18px;
+    background: #fff;
+    color: #000;
+    transition: 0.2s ease;
+}
+
+.bts-tier input:checked + .bts-tier-content {
+    background: #000;
+    color: #fff;
+}
+
+.bts-tier input:checked + .bts-tier-content .bts-original {
+    color: #ccc;
+}
+
+.bts-original {
+    text-decoration: line-through;
+    margin-left: 10px;
+    color: #999;
+}

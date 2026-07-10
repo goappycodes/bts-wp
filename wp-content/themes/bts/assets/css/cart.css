@@ -1,0 +1,241 @@
+/* Cart Style */
+
+.cart-page-logo {
+    text-align: center;
+    padding: 30px 0 20px;
+}
+
+.ast-single-post .entry-title {
+    padding: 30px 0;
+    margin: 10px 0 0;
+    border-top: 1px solid #e7e7e7;
+}
+
+.page .entry-header {
+    margin-bottom: 0;
+}
+
+.ast-left-sidebar #secondary {
+    display: none;
+}
+
+#primary {
+    border: 0 !important;
+    width: 100%;
+    margin-bottom: 0;
+    margin: 4em 0 !important;
+    padding-left: 0 !important;
+    background-color: #fff;
+}
+
+.woocommerce .cart-collaterals .cart_totals, 
+.woocommerce-page .cart-collaterals .cart_totals {
+    width: 100%;
+}
+
+.checkout-button.button.alt.wc-forward {
+    padding: 8px 0;
+}
+
+header#masthead, 
+.site-above-footer-wrap, 
+.site-primary-footer-wrap {
+    display: none !important;
+}
+
+body {
+    background-color: var(--primary-color);
+}
+
+.home-left, .floating-offer-right {
+    display: none !important;
+}
+
+.ast-article-single {
+    padding: 0 60px;
+}
+
+.site-content>.ast-container {
+    max-width: 1200px;
+}
+
+.entry-content>.woocommerce {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.entry-content>.woocommerce .woocommerce-notices-wrapper {
+    flex: 0 0 100%;
+    margin-bottom: 20px;
+}
+
+.entry-content>.woocommerce form.woocommerce-cart-form {
+    flex: 0 0 65%;
+    padding-right: 15px;
+}
+
+.entry-content>.woocommerce .cart-collaterals {
+    flex: 0 0 35%;
+    padding-left: 0;
+}
+
+.product-subtotal {
+    text-align: right;
+}
+
+.coupon {
+    margin-bottom: 30px !important;
+}
+
+td.product-remove {
+    padding-right: 0 !important;
+}
+
+tr.woocommerce-cart-form__cart-item.cart_item td {
+    padding-right: 5px;
+}
+
+tr.woocommerce-cart-form__cart-item.cart_item td:last-child {
+    padding-right: 15px;
+}
+
+.site-below-footer-wrap .site-footer-below-section-1 .footer-widget-area {
+    display: none;
+}
+
+.ast-footer-copyright p:first-child {
+    text-align: center;
+}
+
+.woocommerce table.shop_table thead th, 
+.woocommerce-page table.shop_table thead th, 
+.woocommerce-cart .cart-collaterals .cart_totals>h2 {
+    font-weight: bold;
+    color: #000;
+    text-transform: uppercase;
+    font-size: 1rem;
+    line-height: 1.8;
+}
+
+.checkout-button.button.alt.wc-forward {
+    background-color: var(--secondary-color);
+    line-height: 1.4;
+}
+
+.woocommerce a.button.alt, 
+.woocommerce-page table.cart td.actions .button, 
+.woocommerce-page #content table.cart td.actions .button {
+    padding: 0 40px !important;
+    min-height: 40px;
+    line-height: 40px !important;
+    font-size: 1rem;
+}
+
+.woocommerce-page #content table.cart td.actions .input-text {
+    min-height: 40px;
+}
+
+.woocommerce-cart .cart-collaterals .cart_totals tr td {
+    text-align: right;
+}
+
+.woocommerce-cart .cart-collaterals .cart_totals tr td {
+    padding: 10px 0;
+}
+
+#paypal-credit-banner {
+    display: none;
+}
+
+@media (max-width: 1024px) {
+    .entry-content>.woocommerce {
+        flex-direction: column;
+    }
+    
+    .entry-content>.woocommerce form.woocommerce-cart-form {
+        padding-right: 0;
+    }
+    
+    .entry-content>.woocommerce .cart-collaterals {
+        padding-left: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .woocommerce-page table.cart td.actions .coupon {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    tr.woocommerce-cart-form__cart-item.cart_item td {
+        padding: 10px 20px;
+    }
+    
+    td.product-remove {
+        padding-right: 20px !important;
+    }
+}
+
+@media (max-width: 767px) {
+    .coupon {
+        flex-direction: column;
+    }
+    
+    .woocommerce table.cart td.actions .coupon .input-text {
+        width: 100% !important;
+        margin-right: 0;
+    }
+    
+    button.button {
+        width: 100% !important;
+        margin: 10px 0 0 0 !important;
+        padding: 12px !important;
+    }
+    
+    .ast-article-single {
+        padding: 0 10px;
+    }
+    
+    .woocommerce a.button.alt, 
+    .woocommerce-page table.cart td.actions .button, 
+    .woocommerce-page #content table.cart td.actions .button {
+        padding: 0 10px !important;
+    }
+    
+    .woocommerce-page table.cart td.actions .coupon {
+        margin-bottom: 0 !important;
+    }
+    
+    .cart-page-logo img {
+        max-width: 70%;
+    }
+    
+    .cart-page-logo {
+        padding-bottom: 0;
+    }
+    
+    .entry-title {
+        font-size: 2rem !important;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

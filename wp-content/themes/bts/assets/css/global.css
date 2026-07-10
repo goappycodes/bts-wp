@@ -1,0 +1,140 @@
+:root {
+    --primary-color: #9c1b20;
+    --secondary-color: #0a4a7c;
+}
+
+html {
+    overflow: auto!important;
+}
+
+.aws-container .aws-show-clear .aws-search-field {
+    background: #f7f7f7;
+}
+
+div#cs_preview_popup {
+    content-visibility: visible!important;
+}
+
+body {
+    font-family: "-apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, Oxygen-Sans, Ubuntu, Cantarell, &quot;Helvetica Neue&quot;, sans-serif", sans-serif;
+}
+
+body:not(.fragment-loaded-body) .ast-site-header-cart .ast-addon-cart-wrap i.astra-icon:after {
+	display:none
+}
+
+.ast-button {
+    display: inline-block;
+}
+
+.floating-offer-left img, .floating-offer-right img {
+    width: 140px;
+    max-width: calc(50vw - 540px - 10px + 20px);
+}
+
+ul.products .delivery-time-info,
+ul.products span.ast-woo-product-category,
+ul.products .price {
+    color: #000;
+    font-weight: bold;
+}
+
+.summary.entry-summary p {
+	margin-bottom: auto;
+}
+
+.woocommerce div.product p.price-unit {
+	opacity: 0.9!important;
+}
+
+.woocommerce div.product p.price, .woocommerce div.product span.price {
+	line-height: 1.2;
+	font-size: 2em;
+}
+
+.woocommerce .woocommerce-breadcrumb {
+	font-size: 0.8em;
+}
+
+dt.variation-Engraving {
+    display: block!important;
+    float: none!important;
+    font-size: 0.8em;
+    font-weight: bold!important;
+    line-height: 1;
+}
+
+.wcml-cart-dialog-buttons button,
+.wcml-cart-dialog-buttons button:hover,
+.wcml-cart-dialog-buttons button:active {
+    color: white;
+}
+
+
+@media (min-width:1024px) {
+    .home-left a {
+        display: inline-block;
+        min-height: 104px;
+        position: fixed;
+        top: calc(50% - 52px);
+        z-index: 9;
+        background: #fff;
+        margin-bottom: 10px;
+        padding: 10px 10px;
+        border: 1px solid #ddd;
+        border-left: 0;
+    }
+    
+    .home-left>a img {
+        max-width: 8vw;
+    }
+    
+    .floating-offer-right {
+        top: 0;
+        display: flex!important;
+        flex-direction: column;
+        background: none;
+        justify-content: center;
+        height: 100%;
+        padding: 0;
+        align-items: flex-end;
+        position: fixed;
+        right: -1px;
+        z-index: 999;
+    }
+    
+    .floating-offer-right>* {
+        margin: 5px 0;
+        padding: 5px;
+        background-color: #fff;
+        min-width: 100%;
+        border: 1px solid #ddd;
+        border-radius: 0;
+    }
+}
+
+@media (max-width: 1023px) {
+    .home-left, 
+    .floating-offer-right {
+        display: none;
+    }
+}
+
+@media (max-width: 767px) {
+    .ast-builder-grid-row.ast-grid-center-col-layout-only {
+        flex-direction: column;
+    }
+
+    .ast-builder-grid-row.ast-grid-center-col-layout-only .ast-grid-section-center {
+        padding: 5px;
+    }	
+	.site-above-header-wrap .site-header-above-section-left, .site-above-header-wrap .site-header-above-section-center {
+	    max-width: 90%!important;
+	    width: 90%;
+	}
+	
+	.ast-header-break-point .header-widget-area[data-section="sidebar-widgets-header-widget-2"] {
+	    width: 100%;
+	}
+	
+}

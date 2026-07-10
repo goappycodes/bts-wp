@@ -1,0 +1,17 @@
+/* Terms And Conditions Style */
+
+#content {
+    padding: 30px 0 50px;
+}
+
+.ast-single-post .entry-title {
+    display: none;
+}
+
+.entry-content h1 {
+    text-align: center;
+    color: var(--primary-color);
+    font-weight: bold;
+    font-size: 1.688rem;
+    margin-bottom: 30px;
+}
