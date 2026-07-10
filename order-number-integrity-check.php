@@ -7,15 +7,20 @@
  * go stale when Redis object cache serves an old value.
  *
  * What it does on every run:
- *  1. Loads all orders from the last 90 days and maps their custom order numbers.
- *  2. Verifies the plugin counter option is >= (highest used number + 1).
- *     If it is behind (stale cache scenario), it resets the counter to max + 1
- *     and flushes the object cache keys for that option.
- *  3. Scans orders created in the last 24 hours for duplicate custom order
- *     numbers (compared against the full 90-day window). The NEWER order in a
- *     duplicate pair gets re-numbered from the corrected counter. An order note
- *     is added so there is an audit trail.
- *  4. Emails a report to ONIC_ALERT_EMAIL only when a problem was found.
+ *  1. Reads the highest custom order number currently in the database and makes
+ *     sure the plugin counter option is >= (highest used number + 1). If the
+ *     counter is behind (the stale Redis cache scenario), it resets the counter
+ *     to max + 1 and flushes the object cache keys for that option.
+ *  2. Loads ONLY the orders created in the last 24 hours and, for each one,
+ *     checks the WHOLE database for any other order that shares the same custom
+ *     order number. If a duplicate is found, the NEWER order (the recent one
+ *     that reused a number) gets re-numbered from the corrected counter and an
+ *     order note is added so there is an audit trail.
+ *  3. Emails a report to ONIC_ALERT_EMAIL only when a problem was found.
+ *
+ * Unlike a windowed comparison, the duplicate check in step 2 compares each
+ * recent order against every order in the database, so a collision with an old
+ * order (older than any lookback window) is still caught.
  *
  * Usage:
  *   CLI / cron (recommended):
@@ -33,8 +38,7 @@
 // ---------------------------- CONFIG ----------------------------
 define( 'ONIC_SECRET',        '2823ff8336773a0daa1a57704cdc102a' );
 define( 'ONIC_ALERT_EMAIL',   'goappycodes@gmail.com' );
-define( 'ONIC_LOOKBACK_DAYS', 90 );    // comparison window for duplicates + max number
-define( 'ONIC_CHECK_HOURS',   24 );    // only orders in this window get auto-fixed
+define( 'ONIC_CHECK_HOURS',   24 );    // only orders created in this window are checked / auto-fixed
 define( 'ONIC_AUTO_FIX',      true );  // false = report-only mode (no changes, still emails)
 define( 'ONIC_ALWAYS_EMAIL',  false ); // true = also email when everything is healthy
 
@@ -119,6 +123,63 @@ function onic_build_full_number( $old_full, $new_numeric ) {
 }
 
 /**
+ * Resolve the meta table + id column to query, honouring HPOS (custom order
+ * tables) when it is enabled and falling back to classic postmeta otherwise.
+ * Returns array( $table_name, $id_column ).
+ */
+function onic_meta_table_info() {
+	global $wpdb;
+	$hpos = false;
+	if ( class_exists( '\Automattic\WooCommerce\Utilities\OrderUtil' ) ) {
+		$hpos = \Automattic\WooCommerce\Utilities\OrderUtil::custom_orders_table_usage_is_enabled();
+	}
+	return $hpos
+		? array( $wpdb->prefix . 'wc_orders_meta', 'order_id' )
+		: array( $wpdb->postmeta, 'post_id' );
+}
+
+/**
+ * Highest custom order number currently stored in the database (across ALL
+ * orders, not a time window). This is the true ceiling the counter must clear.
+ */
+function onic_get_max_numeric_from_db() {
+	global $wpdb;
+	list( $table ) = onic_meta_table_info();
+	$val = $wpdb->get_var(
+		$wpdb->prepare(
+			"SELECT MAX(CAST(meta_value AS UNSIGNED)) FROM {$table} WHERE meta_key = %s",
+			ONIC_NUM_META
+		)
+	);
+	return (int) $val;
+}
+
+/**
+ * Every order id in the database whose custom order number equals $numeric.
+ * Queries the meta table directly so it is storage-agnostic (HPOS or legacy)
+ * and does not depend on a comparison window.
+ */
+function onic_find_orders_by_number( $numeric ) {
+	global $wpdb;
+	list( $table, $id_col ) = onic_meta_table_info();
+	$ids = $wpdb->get_col(
+		$wpdb->prepare(
+			"SELECT {$id_col} FROM {$table} WHERE meta_key = %s AND meta_value = %s",
+			ONIC_NUM_META,
+			(string) $numeric
+		)
+	);
+	return array_map( 'intval', (array) $ids );
+}
+
+/**
+ * True if any order already uses this number (used to pick a safe replacement).
+ */
+function onic_number_in_use( $numeric ) {
+	return count( onic_find_orders_by_number( $numeric ) ) > 0;
+}
+
+/**
  * Read the counter option bypassing the object cache as much as possible,
  * so a stale Redis value does not fool the check itself.
  */
@@ -152,49 +213,16 @@ function onic_set_counter( $value ) {
 	wp_cache_delete( 'notoptions', 'options' );
 }
 
-onic_log( 'Starting order number integrity check (lookback ' . ONIC_LOOKBACK_DAYS . 'd, fix window ' . ONIC_CHECK_HOURS . 'h).' );
+onic_log( 'Starting order number integrity check (checking orders from the last ' . ONIC_CHECK_HOURS . 'h against the whole database).' );
 
 // ------------------------------------------------------------------
-// 1. Load last 90 days of orders and map their numbers.
+// 1. Counter sanity check (this is where stale Redis bites).
+//    Uses the true database max, independent of the 24h fetch below.
 // ------------------------------------------------------------------
-$orders = wc_get_orders( array(
-	'limit'        => -1,
-	'type'         => 'shop_order',
-	'status'       => array_keys( wc_get_order_statuses() ), // include failed/cancelled: they consumed numbers too
-	'date_created' => '>=' . ( time() - ONIC_LOOKBACK_DAYS * DAY_IN_SECONDS ),
-	'orderby'      => 'date',
-	'order'        => 'ASC',
-) );
-
-if ( empty( $orders ) ) {
-	onic_log( 'No orders found in the lookback window. Nothing to do.' );
-	exit( 0 );
-}
-
-$number_map  = array(); // numeric => array of ['id' =>, 'ts' =>, 'full' =>]
-$max_numeric = 0;
-
-foreach ( $orders as $order ) {
-	$numeric = onic_extract_numeric( $order );
-	if ( $numeric <= 0 ) {
-		continue; // order has no custom number assigned (yet)
-	}
-	$number_map[ $numeric ][] = array(
-		'id'   => $order->get_id(),
-		'ts'   => $order->get_date_created() ? $order->get_date_created()->getTimestamp() : 0,
-		'full' => (string) $order->get_meta( ONIC_FULL_META ),
-	);
-	if ( $numeric > $max_numeric ) {
-		$max_numeric = $numeric;
-	}
-}
-
-onic_log( 'Scanned ' . count( $orders ) . ' orders. Highest custom order number in window: ' . $max_numeric . '.' );
-
-// ------------------------------------------------------------------
-// 2. Counter sanity check (this is where stale Redis bites).
-// ------------------------------------------------------------------
+$max_numeric   = onic_get_max_numeric_from_db();
 $expected_next = $max_numeric + 1;
+
+onic_log( 'Highest custom order number in the database: ' . $max_numeric . '.' );
 
 if ( '' !== ONIC_COUNTER_OPT ) {
 	$counter_db    = onic_get_counter_from_db();
@@ -227,14 +255,64 @@ if ( '' !== ONIC_COUNTER_OPT ) {
 }
 
 // ------------------------------------------------------------------
-// 3. Duplicate check for orders created in the last 24 hours.
+// 2. Load orders from the last 24 hours and, for each, check the whole
+//    database for a duplicate custom order number.
 // ------------------------------------------------------------------
 $window_start = time() - ONIC_CHECK_HOURS * HOUR_IN_SECONDS;
-$fixed        = array();
-$dupes_found  = array();
-$next_number  = max( $expected_next, ( '' !== ONIC_COUNTER_OPT ? (int) onic_get_counter_from_db() : $expected_next ) );
 
-foreach ( $number_map as $numeric => $entries ) {
+$orders = wc_get_orders( array(
+	'limit'        => -1,
+	'type'         => 'shop_order',
+	'status'       => array_keys( wc_get_order_statuses() ), // include failed/cancelled: they consumed numbers too
+	'date_created' => '>=' . $window_start,
+	'orderby'      => 'date',
+	'order'        => 'ASC',
+) );
+
+if ( empty( $orders ) ) {
+	onic_log( 'No orders created in the last ' . ONIC_CHECK_HOURS . 'h. No duplicate check needed.' );
+} else {
+	onic_log( 'Loaded ' . count( $orders ) . ' order(s) from the last ' . ONIC_CHECK_HOURS . 'h to check.' );
+}
+
+$processed    = array(); // numbers already handled (a number can back several recent orders)
+$dupes_found  = array();
+$fixed        = array();
+
+// Seed the replacement number above every number currently in use.
+$counter_val = ( '' !== ONIC_COUNTER_OPT ) ? (int) onic_get_counter_from_db() : 0;
+$next_number = max( $expected_next, $counter_val );
+
+foreach ( $orders as $order ) {
+	$numeric = onic_extract_numeric( $order );
+	if ( $numeric <= 0 ) {
+		continue; // order has no custom number assigned (yet)
+	}
+	if ( isset( $processed[ $numeric ] ) ) {
+		continue; // already inspected this number via an earlier recent order
+	}
+	$processed[ $numeric ] = true;
+
+	// Look up EVERY order in the database that carries this number.
+	$match_ids = onic_find_orders_by_number( $numeric );
+	if ( count( $match_ids ) < 2 ) {
+		continue; // unique in the database - nothing to do
+	}
+
+	// Load the matches so we can order them by creation time.
+	$entries = array();
+	foreach ( $match_ids as $mid ) {
+		$mo = wc_get_order( $mid );
+		if ( ! $mo ) {
+			continue;
+		}
+		$entries[] = array(
+			'id'    => $mid,
+			'ts'    => $mo->get_date_created() ? $mo->get_date_created()->getTimestamp() : 0,
+			'full'  => (string) $mo->get_meta( ONIC_FULL_META ),
+			'order' => $mo,
+		);
+	}
 	if ( count( $entries ) < 2 ) {
 		continue;
 	}
@@ -251,37 +329,29 @@ foreach ( $number_map as $numeric => $entries ) {
 		$onic_problems = true;
 
 		$in_window = ( $dupe['ts'] >= $window_start );
-		onic_log( 'DUPLICATE: order #' . $dupe['id'] . ' shares number ' . $numeric . ' (' . $dupe['full'] . ') with order #' . $keeper['id'] . ( $in_window ? '' : ' [outside 24h fix window, reporting only]' ) . '.' );
+		onic_log( 'DUPLICATE: order #' . $dupe['id'] . ' shares number ' . $numeric . ' (' . $dupe['full'] . ') with order #' . $keeper['id'] . ( $in_window ? '' : ' [older than ' . ONIC_CHECK_HOURS . 'h, reporting only]' ) . '.' );
 
 		if ( ! ONIC_AUTO_FIX || ! $in_window ) {
 			continue;
 		}
 
-		// Make sure the candidate number is genuinely unused.
-		while ( isset( $number_map[ $next_number ] ) ) {
+		// Make sure the candidate number is genuinely unused in the database.
+		while ( onic_number_in_use( $next_number ) ) {
 			$next_number++;
 		}
 
-		$order = wc_get_order( $dupe['id'] );
-		if ( ! $order ) {
-			onic_log( 'ERROR: could not load order #' . $dupe['id'] . ' for fixing.' );
-			continue;
-		}
+		$fix_order = $dupe['order'];
+		$new_full  = onic_build_full_number( $dupe['full'], $next_number );
 
-		$new_full = onic_build_full_number( $dupe['full'], $next_number );
-
-		$order->update_meta_data( ONIC_NUM_META, $next_number );
-		$order->update_meta_data( ONIC_FULL_META, $new_full );
-		$order->add_order_note( sprintf(
+		$fix_order->update_meta_data( ONIC_NUM_META, $next_number );
+		$fix_order->update_meta_data( ONIC_FULL_META, $new_full );
+		$fix_order->add_order_note( sprintf(
 			'Order number integrity script: duplicate custom order number %s (also used by order #%d) replaced with %s.',
 			$dupe['full'],
 			$keeper['id'],
 			$new_full
 		) );
-		$order->save();
-
-		// Register the new number so later iterations respect it.
-		$number_map[ $next_number ][] = array( 'id' => $dupe['id'], 'ts' => $dupe['ts'], 'full' => $new_full );
+		$fix_order->save();
 
 		onic_log( 'FIXED: order #' . $dupe['id'] . ' re-numbered ' . $dupe['full'] . ' -> ' . $new_full . '.' );
 		$fixed[] = $dupe['id'];
@@ -296,13 +366,13 @@ if ( ONIC_AUTO_FIX && ! empty( $fixed ) && '' !== ONIC_COUNTER_OPT ) {
 }
 
 if ( empty( $dupes_found ) ) {
-	onic_log( 'No duplicate order numbers found.' );
+	onic_log( 'No duplicate order numbers found for orders in the last ' . ONIC_CHECK_HOURS . 'h.' );
 }
 
 onic_log( 'Check complete. Problems found: ' . ( $onic_problems ? 'YES' : 'no' ) . '.' );
 
 // ------------------------------------------------------------------
-// 4. Email report.
+// 3. Email report.
 // ------------------------------------------------------------------
 if ( $onic_problems || ONIC_ALWAYS_EMAIL ) {
 	$site    = wp_parse_url( home_url(), PHP_URL_HOST );
