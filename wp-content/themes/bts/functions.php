@@ -99,6 +99,7 @@ add_filter('use_block_editor_for_post', '__return_false', 10);
 
 require_once('legacy_functions.php');
 require_once('dynamic-price.php');
+require_once('category-seo.php');
 
 
 function example_theme_support() {

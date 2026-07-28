@@ -222,3 +222,180 @@ body.post-type-archive .woocommerce-products-header__title.page-title,
     }
 }
 
+
+/* =========================================================================
+   Category SEO content blocks (top + bottom)
+   ========================================================================= */
+.bts-cat-seo {
+    max-width: 900px;
+    margin: 0 auto 30px;
+    text-align: left;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: #333;
+}
+
+.bts-cat-seo--bottom {
+    margin: 45px auto 15px;
+    padding-top: 28px;
+    border-top: 1px solid #eaeaea;
+}
+
+.bts-cat-seo__body {
+    position: relative;
+}
+
+.bts-cat-seo__body > *:first-child {
+    margin-top: 0;
+}
+
+.bts-cat-seo__body h1,
+.bts-cat-seo__body h2,
+.bts-cat-seo__body h3,
+.bts-cat-seo__body h4 {
+    color: var(--primary-color);
+    font-weight: bold;
+    line-height: 1.3;
+    margin: 22px 0 12px;
+}
+
+.bts-cat-seo__body h2 { font-size: 1.35rem; }
+.bts-cat-seo__body h3 { font-size: 1.15rem; }
+.bts-cat-seo__body h4 { font-size: 1.02rem; }
+
+.bts-cat-seo__body p { margin: 0 0 14px; }
+
+.bts-cat-seo__body ul,
+.bts-cat-seo__body ol {
+    margin: 0 0 14px 20px;
+}
+
+.bts-cat-seo__body li { margin-bottom: 6px; }
+
+.bts-cat-seo__body a {
+    color: var(--primary-color);
+    text-decoration: underline;
+}
+
+.bts-cat-seo__body a:hover { text-decoration: none; }
+
+/* Collapsed top block: show ~5 lines, fade out the overflow. */
+.bts-cat-seo--top.is-collapsed .bts-cat-seo__body {
+    max-height: 8.6em; /* ~5 lines at line-height 1.7 */
+    overflow: hidden;
+}
+
+.bts-cat-seo--top.is-collapsed .bts-cat-seo__body::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 3.6em;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1) 92%);
+    pointer-events: none;
+}
+
+.bts-cat-seo__toggle {
+    display: inline-block;
+    margin-top: 6px;
+    padding: 0;
+    background: none;
+    border: 0;
+    color: var(--primary-color);
+    font-weight: bold;
+    font-size: 0.9rem;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.bts-cat-seo__toggle:hover { text-decoration: none; }
+
+.bts-cat-seo__toggle-less { display: none; }
+
+.bts-cat-seo--top:not(.is-collapsed) .bts-cat-seo__toggle-more { display: none; }
+.bts-cat-seo--top:not(.is-collapsed) .bts-cat-seo__toggle-less { display: inline; }
+
+/* Hidden when JS determines the content already fits in the visible area. */
+.bts-cat-seo__toggle.is-hidden { display: none; }
+
+@media (max-width: 767px) {
+    .bts-cat-seo { font-size: 0.9rem; }
+    .bts-cat-seo--bottom { margin-top: 35px; }
+}
+
+/* =========================================================================
+   Subcategory links (shown just before the products on category archives)
+   ========================================================================= */
+.bts-subcategories {
+    width: 100%;
+    margin: 5px 0 25px;
+    padding: 0;
+}
+
+.bts-subcategories__title {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #777;
+    margin-bottom: 12px;
+}
+
+.bts-subcategories__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.bts-subcategories__item {
+    margin: 0;
+    padding: 0;
+    border: 0 !important;
+}
+
+.bts-subcategories__item a {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 14px;
+    background: #f5f5f5;
+    border: 1px solid #e4e4e4;
+    border-radius: 30px;
+    color: #333;
+    font-size: 0.85rem;
+    font-weight: 600;
+    line-height: 1.2;
+    text-decoration: none;
+    transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.bts-subcategories__item a:hover {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: #fff;
+}
+
+.bts-subcategories__count {
+    display: inline-block;
+    min-width: 20px;
+    padding: 1px 6px;
+    background: #fff;
+    border-radius: 20px;
+    color: var(--primary-color);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+.bts-subcategories__item a:hover .bts-subcategories__count {
+    background: rgba(255, 255, 255, 0.9);
+}
+
+@media (max-width: 767px) {
+    .bts-subcategories__item a { font-size: 0.8rem; padding: 6px 12px; }
+}
