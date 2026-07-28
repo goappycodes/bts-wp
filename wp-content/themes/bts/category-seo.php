@@ -127,6 +127,22 @@ function bts_cat_seo_get( $key ) {
 }
 
 /**
+ * Language-aware UI labels (German site default, English otherwise).
+ * Keeps the front-end strings correct on the WPML /en/ pages without
+ * requiring String Translation entries.
+ */
+function bts_cat_seo_label( $key ) {
+	$is_de  = ( 0 === strpos( get_locale(), 'de' ) );
+	$labels = array(
+		'more'          => $is_de ? 'Mehr lesen' : 'Read more',
+		'less'          => $is_de ? 'Weniger anzeigen' : 'Show less',
+		'subcategories' => $is_de ? 'Unterkategorien' : 'Subcategories',
+	);
+
+	return isset( $labels[ $key ] ) ? $labels[ $key ] : '';
+}
+
+/**
  * Top block — above the product grid, clamped to ~5 lines with a fade.
  * Hooked into the products header, after the (hidden) default description.
  */
@@ -140,8 +156,8 @@ function bts_cat_seo_render_top() {
 	<div class="bts-cat-seo bts-cat-seo--top is-collapsed">
 		<div class="bts-cat-seo__body"><?php echo do_shortcode( wpautop( $content ) ); ?></div>
 		<button type="button" class="bts-cat-seo__toggle" aria-expanded="false">
-			<span class="bts-cat-seo__toggle-more"><?php esc_html_e( 'Mehr lesen', 'bts' ); ?></span>
-			<span class="bts-cat-seo__toggle-less"><?php esc_html_e( 'Weniger anzeigen', 'bts' ); ?></span>
+			<span class="bts-cat-seo__toggle-more"><?php echo esc_html( bts_cat_seo_label( 'more' ) ); ?></span>
+			<span class="bts-cat-seo__toggle-less"><?php echo esc_html( bts_cat_seo_label( 'less' ) ); ?></span>
 		</button>
 	</div>
 	<?php
@@ -194,8 +210,8 @@ function bts_cat_subcategory_links() {
 		return;
 	}
 	?>
-	<nav class="bts-subcategories" aria-label="<?php esc_attr_e( 'Unterkategorien', 'bts' ); ?>">
-		<span class="bts-subcategories__title"><?php esc_html_e( 'Unterkategorien', 'bts' ); ?></span>
+	<nav class="bts-subcategories" aria-label="<?php echo esc_attr( bts_cat_seo_label( 'subcategories' ) ); ?>">
+		<span class="bts-subcategories__title"><?php echo esc_html( bts_cat_seo_label( 'subcategories' ) ); ?></span>
 		<ul class="bts-subcategories__list">
 			<?php foreach ( $children as $child ) : ?>
 				<li class="bts-subcategories__item">
